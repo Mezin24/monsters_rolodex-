@@ -1,18 +1,16 @@
 import { Component } from 'react';
 import { url } from './utils/utils';
+import CardList from './components/card-list/card-list.component';
+import SaerchBox from './components/search-box/search-box.components';
+import './App.css';
 
 class App extends Component {
-  constructor() {
-    super();
-    console.log('create');
-  }
   state = {
     monsters: [],
     filter: '',
   };
 
   componentDidMount() {
-    console.log('mount');
     this.fetchData(url).then((data) =>
       this.setState(() => ({ monsters: data, filteredMonsters: data }))
     );
@@ -28,34 +26,37 @@ class App extends Component {
     }
   }
 
+  onSearchChange = (e) => {
+    this.setState(() => ({
+      filter: e.target.value.trim().toLowerCase(),
+    }));
+  };
+
   render() {
-    console.log('render');
     const { monsters, filter } = this.state;
+    const { onSearchChange } = this;
     const filteredMonsters = monsters.filter((monster) =>
       monster.name.toLowerCase().includes(filter)
     );
 
     return (
       <div className='App'>
-        <input
-          type='search'
-          className='search-box'
+        <h1 className='app-title'>Monsters Rolodex</h1>
+        <SaerchBox
+          filter={filter}
+          onSearchChange={onSearchChange}
           placeholder='search monster'
-          value={this.state.filter}
-          onChange={(e) =>
-            this.setState(() => ({
-              filter: e.target.value.trim().toLowerCase(),
-            }))
-          }
+          className='search-box'
         />
-        {filteredMonsters.map((monster) => {
+        {<CardList monsters={filteredMonsters} />}
+        {/* {filteredMonsters.map((monster) => {
           const { name, id } = monster;
           return (
             <div key={id}>
               <h1>{name}</h1>
             </div>
           );
-        })}
+        })} */}
       </div>
     );
   }
